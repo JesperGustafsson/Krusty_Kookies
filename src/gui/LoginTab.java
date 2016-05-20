@@ -14,9 +14,9 @@ import javafx.scene.control.Alert.*;
 
 public class LoginTab {
 	@FXML private Text actiontarget;
-	@FXML private TextField cType;
-	@FXML private TextField pAmount;
-	@FXML private TextField dAddress;
+	@FXML private TextField cookieName;
+	@FXML private TextField amountOfPallets;
+	@FXML private TextField deliveryAddress;
 
 
 	private BookingTab bookingTabCtrl;
@@ -32,9 +32,9 @@ public class LoginTab {
 			alert.setContentText("No database connection! Cannot check user credentials.");
 			alert.showAndWait();      	
 		} else {
-			String cookieType = cType.getText();
-			String palletAmount = pAmount.getText();
-			String deliveryAddress = dAddress.getText();
+			String cookieType = cookieName.getText();
+			String palletAmount = amountOfPallets.getText();
+			String deliveryAddress = this.deliveryAddress.getText();
 			System.out.println(cookieType + "  " + palletAmount + "  " + deliveryAddress);
 
 			

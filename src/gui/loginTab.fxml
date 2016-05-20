@@ -16,22 +16,22 @@
          GridPane.columnIndex="0" GridPane.rowIndex="0"
         GridPane.columnSpan="2"/>
  
-    <Label text="Cookie Type:"
+    <Label text="Cookie Name:"
         GridPane.columnIndex="0" GridPane.rowIndex="1"/>
  
-    <TextField fx:id="cType"
+    <TextField fx:id="cookieName"
         GridPane.columnIndex="1" GridPane.rowIndex="1"/>
          
     <Label text="Amount of Pallets:"
         GridPane.columnIndex="0" GridPane.rowIndex="2"/>
  
-    <TextField fx:id="pAmount"
+    <TextField fx:id="amountOfPallets"
         GridPane.columnIndex="1" GridPane.rowIndex="2"/>
             
     <Label text="Delivery Address:"
         GridPane.columnIndex="0" GridPane.rowIndex="3"/>
  
-    <TextField fx:id="dAddress"
+    <TextField fx:id="deliveryAddress"
         GridPane.columnIndex="1" GridPane.rowIndex="3"/>
     
          

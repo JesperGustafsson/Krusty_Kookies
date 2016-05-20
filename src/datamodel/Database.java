@@ -97,7 +97,35 @@ public class Database {
 		} catch(SQLException e) {
 			
 			e.printStackTrace();
-			System.out.println("HAHA NÅGOT GICK FEL I ORDERPALLET");
+			System.out.println("Something wrong went wrong Database/orderPallet");
 		}
+	}
+
+	public Pallet getPallet(String palletID) {
+		try {
+			PreparedStatement ps = conn.prepareStatement("hitta pallet i databasen och returnera en pallet(objekt) med värden");
+			
+			ps.executeUpdate();
+
+		} catch(SQLException e) {
+			
+			e.printStackTrace();
+			System.out.println("Something wrong went wrong Database/getPallet");
+		}
+		return null;
+	}
+	
+	public Pallet blockPallet(String palletID) {
+		try {
+			PreparedStatement ps = conn.prepareStatement("hitta palleten i databasen och blockera den(Skulle inte flera pallets blockeras?)");
+			
+			ps.executeUpdate();
+
+		} catch(SQLException e) {
+			
+			e.printStackTrace();
+			System.out.println("Something wrong went wrong Database/blockPallet");
+		}
+		return null;
 	}
 }

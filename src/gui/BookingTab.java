@@ -5,6 +5,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -18,6 +19,7 @@ import java.util.List;
 
 import datamodel.CurrentUser;
 import datamodel.Database;
+import datamodel.Pallet;
 import datamodel.Show;
 
 import java.util.ArrayList;
@@ -45,6 +47,9 @@ public class BookingTab {
 	private Label showVenue;
 	@FXML
 	private Label showFreeSeats;
+	
+	@FXML
+	private TextField searchID;
 
 	// booking button
 	@FXML
@@ -105,8 +110,18 @@ public class BookingTab {
 
 	@FXML protected void searchButtonAction(ActionEvent event) { // Orderknappen
 
-		System.out.println("hahaha shhehh ");
+		String palletID = searchID.getText();
+		System.out.println("hahaha shhehh " + searchID.getText());
+		Pallet pallet = db.getPallet(palletID);
 	}
+	
+	@FXML protected void blockButtonAction(ActionEvent event) { // Orderknappen
+
+		String palletID = searchID.getText();
+		System.out.println("hahaha shhehh " + searchID.getText());
+		Pallet pallet = db.blockPallet(palletID);
+	}
+	
 	// helpers
 	// updates user display
 	private void fillStatus(String usr) {

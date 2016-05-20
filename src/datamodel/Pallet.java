@@ -4,16 +4,25 @@ package datamodel;
 /* --- TODO: Modify as needed --- */
 
 public class Pallet {
-	String cookieType;
+	String orderNbr;
+	String cookieName;
+	String barCode;
+	boolean blockStatus;
+	String location;
+	
 	String deliveryAddress;
 
-	public Pallet(String cookieType, String deliveryAddress) {
-		this.cookieType = cookieType;
-		this.deliveryAddress = deliveryAddress;
+
+	public Pallet(String orderNbr, String cookieName, String barCode, boolean blockStatus, String location) {
+		this.orderNbr = orderNbr;
+		this.cookieName = cookieName;
+		this.barCode = barCode;
+		this.blockStatus = blockStatus;
+		this.location = location;
 	}
 
 
-	public String getType() { return cookieType; }
+	public String getType() { return cookieName; }
 	
 	public String getAddress() { return deliveryAddress; }
 
