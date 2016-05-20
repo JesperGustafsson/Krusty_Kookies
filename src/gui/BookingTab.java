@@ -40,16 +40,20 @@ public class BookingTab {
 
 	// show info references
 	@FXML
-	private Label showTitle;
+	private Label orderNumber;
 	@FXML
-	private Label showDate;
+	private Label cookieName;
 	@FXML
-	private Label showVenue;
+	private Label barCode;
 	@FXML
-	private Label showFreeSeats;
+	private Label blockStatus;
+	@FXML
+	private Label location;
 	
 	@FXML
 	private TextField searchID;
+	
+	private Pallet currentPallet;
 
 	// booking button
 	@FXML
@@ -112,12 +116,16 @@ public class BookingTab {
 
 		String palletID = searchID.getText();
 		System.out.println("hahaha shhehh " + searchID.getText());
-		Pallet pallet = db.getPallet(palletID);
+		currentPallet = db.getPallet(palletID);
 		updateView();
 	}
 	
-	private updateView() {
-		
+	private void updateView() {
+		orderNumber.setText(currentPallet.getOrderNumber());
+		cookieName.setText(currentPallet.getCookieName());
+		barCode.setText(currentPallet.getBarCode());
+		blockStatus.setText(currentPallet.getBlockStatus());
+		location.setText(currentPallet.getLocation());
 	}
 	
 	@FXML protected void blockButtonAction(ActionEvent event) { // Orderknappen

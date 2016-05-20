@@ -22,8 +22,28 @@ public class Pallet {
 	}
 
 
-	public String getType() { return cookieName; }
-	
-	public String getAddress() { return deliveryAddress; }
+	public String getOrderNumber() {
+		return orderNbr;
+	}
+
+
+	public String getCookieName() {
+		return cookieName;
+	}
+
+
+	public String getBarCode() {
+		return barCode;
+	}
+
+
+	public String getBlockStatus() {
+		return Boolean.toString(blockStatus);
+	}
+
+
+	public String getLocation() {
+		return location;
+	}
 
 }
