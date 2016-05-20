@@ -81,9 +81,7 @@ public class Database {
 	}
 	/* --- TODO: insert more own code here --- */
 
-
-
-	public void orderPallet(String cookieType, String palletAmount, String deliveryAddress) {
+	public void orderPallets(String cookieType, String palletAmount, String deliveryAddress) {
 
 		try {
 			PreparedStatement ps = conn.prepareStatement("INSERT INTO testtable (cType, pAmount, dAddress)"

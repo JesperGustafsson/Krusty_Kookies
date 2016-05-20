@@ -113,6 +113,11 @@ public class BookingTab {
 		String palletID = searchID.getText();
 		System.out.println("hahaha shhehh " + searchID.getText());
 		Pallet pallet = db.getPallet(palletID);
+		updateView();
+	}
+	
+	private updateView() {
+		
 	}
 	
 	@FXML protected void blockButtonAction(ActionEvent event) { // Orderknappen

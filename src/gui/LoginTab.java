@@ -22,25 +22,10 @@ public class LoginTab {
 	private BookingTab bookingTabCtrl;
 	private Database db;
 
-	@FXML protected void orderButtonAction(ActionEvent event) { // Orderknappen
+@FXML protected void orderButtonAction(ActionEvent event) { // Orderknappen
 
-		if(!db.isConnected()) {
-			// inform the user that there is no check against the database
-			Alert alert = new Alert(AlertType.ERROR);
-			alert.setTitle("Login fail");
-			alert.setHeaderText(null);
-			alert.setContentText("No database connection! Cannot check user credentials.");
-			alert.showAndWait();      	
-		} else {
-			String cookieType = cookieName.getText();
-			String palletAmount = amountOfPallets.getText();
-			String deliveryAddress = this.deliveryAddress.getText();
-			System.out.println(cookieType + "  " + palletAmount + "  " + deliveryAddress);
-
-			
-			db.orderPallet(cookieType, palletAmount, deliveryAddress);
-
-		}
+	db.orderPallets(cookieName.getText(), amountOfPallets.getText(), deliveryAddress.getText());
+	
 	}
 
 public void initialize() {
