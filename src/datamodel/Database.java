@@ -3,6 +3,8 @@ package datamodel;
 import java.sql.*;
 import java.util.ArrayList;
 
+import javafx.scene.control.TextField;
+
 /**
  * Database is a class that specifies the interface to the movie database. Uses
  * JDBC and the MySQL Connector/J driver.
@@ -78,15 +80,21 @@ public class Database {
 		return conn;
 	}
 
-	public void orderPallets(ArrayList<String[]> fullOrder) {
+	public void orderPallets(ArrayList<String[]> fullOrder) throws SQLException {
 		
 		String cookieName;
 		int amountOfPallets;
 		String deliveryAddress; 
 		String companyName;
 		String deliveryDate;
-
-		long orderNbr = -3;
+		long orderNbr = 0;
+		
+		ResultSet rs = null;
+		if (fullOrder.isEmpty()) {
+			System.out.println("EMPTY LOL");
+			throw new SQLException("Your order was empty.");
+		}
+		
 		try {
 			PreparedStatement ps = conn.prepareStatement("INSERT INTO orders VALUES (default, ?, default, ?, ?, default);", Statement.RETURN_GENERATED_KEYS);
 			cookieName = fullOrder.get(0)[0];
@@ -94,47 +102,48 @@ public class Database {
 			deliveryAddress = fullOrder.get(0)[2];
 			companyName = fullOrder.get(0)[3];
 			deliveryDate = fullOrder.get(0)[4];
+			System.out.println(cookieName);
 			
 			ps.setString(1, companyName);
 			ps.setString(2, deliveryAddress);
 			ps.setString(3, deliveryDate);
 			ps.executeUpdate();
-			
-			ResultSet rs = ps.getGeneratedKeys();
+			rs = ps.getGeneratedKeys();
+		} catch (SQLException e) {
+			throw new SQLException("Order was not placed due to ERROR: 1");
+		}
+		
+		try {
 			
 			while (rs.next()) {
 				orderNbr = rs.getLong(1);
-				System.out.println("ORDERNBR = " + orderNbr);
 			}
-
 			
-			for (int i = 0; i < fullOrder.size(); i++) {
+			for (int i = 0; i < fullOrder.size()-1; i++) {
 				cookieName = fullOrder.get(i)[0];
 				amountOfPallets = Integer.parseInt(fullOrder.get(i)[1]);
 
-
-
-				PreparedStatement ps2 = conn.prepareStatement("INSERT INTO pallets VALUES (?, ?, default, default, ?);");
-				PreparedStatement ps3 = conn.prepareStatement("UPDATE ingredients natural join recipes " +
-						"set IngQuantity = ingQuantity - quantity " + 
+				PreparedStatement ps2 = conn.prepareStatement("UPDATE ingredients natural join recipes " +
+						"set IngQuantity = ingQuantity - quantity*54*? " + 
 						"where CookieName = ?;"
 					  );
+				PreparedStatement ps3 = conn.prepareStatement("INSERT INTO pallets VALUES (?, ?, default, default, ?);");
+
 
 
 				for (int j = 0; j < amountOfPallets; j++) {
-					ps2.setLong(1, orderNbr);
+					ps2.setInt(1, amountOfPallets);
 					ps2.setString(2, cookieName);
-					ps3.setString(1, cookieName);
-					ps2.setString(3, "DEFAULT LOCATION");
+					ps3.setLong(1, orderNbr);
+					ps3.setString(2, cookieName);
+					ps3.setString(3, "DEFAULT LOCATION");
 					ps2.executeUpdate();
 					ps3.executeUpdate();
 				}
 			}
 
 		} catch(SQLException e) {
-
-			e.printStackTrace();
-			System.out.println("Something wrong went wrong Database/orderPallet");
+			throw new SQLException("Order failed due to unknown error");
 		}
 
 	}
@@ -210,5 +219,67 @@ public class Database {
 			e.printStackTrace();
 			System.out.println("Something wrong went wrong Database/blockPallet");
 		}
+	}
+
+	public void checkInput(String cookieName, String companyName) throws SQLException {
+		
+		try {
+			PreparedStatement ps = conn.prepareStatement("SELECT * FROM cookies where cookiename=?");
+			ps.setString(1, cookieName);
+			ps.executeQuery();
+			ResultSet rs = ps.getResultSet();
+			if (!rs.next()) {
+				throw new SQLException("That cookie does not exist in the database");
+			}
+			
+		} catch (SQLException e) {
+			throw new SQLException("That cookie does not exist in the database");
+		}
+		
+		try {
+			PreparedStatement ps = conn.prepareStatement("SELECT * FROM customers where name=?");
+			ps.setString(1, companyName);
+			ps.executeQuery();
+			ResultSet rs = ps.getResultSet();
+			if (!rs.next()) {
+				throw new SQLException("That customer does not exist in the database");
+			}
+		} catch (SQLException e) {
+			throw new SQLException("That customer does not exist in the database");
+		}		
+	}
+
+	public void checkIngredients(ArrayList<String[]> order) throws SQLException {
+		String currCookie = order.get(0)[0];
+		
+		try {
+			PreparedStatement psO = conn.prepareStatement("DROP table if exists tempT;");
+			PreparedStatement ps0 = conn.prepareStatement("CREATE table tempT as ( "
+														+ "select * from ingredients natural join recipes "
+														+ ");");
+			
+			psO.executeUpdate();
+			ps0.executeUpdate();
+			
+			for (int i = 0; i < order.size(); i++) {
+				currCookie = order.get(i)[0];
+
+				System.out.println("CHECKINGR: " + i + "   "  + currCookie);
+				PreparedStatement ps = conn.prepareStatement("select * from tempT where IngQuantity - Quantity*54*? < 0 and cookiename = ?;");
+				ps.setInt(1, Integer.parseInt(order.get(i)[1]));
+				ps.setString(2, order.get(i)[0]);
+				ps.executeQuery();
+				PreparedStatement ps2 = conn.prepareStatement("UPDATE tempT " + 
+																"set IngQuantity = ingQuantity - quantity*54 " + 
+																"where CookieName = ?;");
+				ps2.setString(1, currCookie);
+				ps2.executeUpdate();
+				
+			}
+			
+			psO.executeUpdate();
+		} catch (Exception e) {
+			throw new SQLException("Not enough ingredients for cookie: " + currCookie);
+		}	
 	}
 }
