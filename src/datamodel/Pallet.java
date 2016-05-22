@@ -1,17 +1,11 @@
 package datamodel;
 
-// Container for the database data
-/* --- TODO: Modify as needed --- */
-
 public class Pallet {
 	String orderNbr;
 	String cookieName;
 	String barCode;
 	boolean blockStatus;
 	String location;
-	
-	String deliveryAddress;
-
 
 	public Pallet(String orderNbr, String cookieName, String barCode, boolean blockStatus, String location) {
 		this.orderNbr = orderNbr;
@@ -45,5 +39,12 @@ public class Pallet {
 	public String getLocation() {
 		return location;
 	}
+
+
+	public void setBlockStatus(boolean b) {
+		blockStatus = b;
+	}
+
+
 
 }

@@ -2,7 +2,6 @@ package datamodel;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Database is a class that specifies the interface to the movie database. Uses
@@ -77,53 +76,139 @@ public class Database {
 
 	public Connection getConnection() {
 		return conn;
-		// return null;
 	}
-	/* --- TODO: insert more own code here --- */
 
-	public void orderPallets(String cookieType, String palletAmount, String deliveryAddress) {
+	public void orderPallets(ArrayList<String[]> fullOrder) {
+		
+		String cookieName;
+		int amountOfPallets;
+		String deliveryAddress; 
+		String companyName;
+		String deliveryDate;
 
+		long orderNbr = -3;
 		try {
-			PreparedStatement ps = conn.prepareStatement("INSERT INTO testtable (cType, pAmount, dAddress)"
-					+ " VALUES(?,?,?);");
-			ps.setString(1, cookieType);
-			ps.setString(2, palletAmount);
-			ps.setString(3, deliveryAddress);
+			PreparedStatement ps = conn.prepareStatement("INSERT INTO orders VALUES (default, ?, default, ?, ?, default);", Statement.RETURN_GENERATED_KEYS);
+			cookieName = fullOrder.get(0)[0];
+			amountOfPallets = Integer.parseInt(fullOrder.get(0)[1]);
+			deliveryAddress = fullOrder.get(0)[2];
+			companyName = fullOrder.get(0)[3];
+			deliveryDate = fullOrder.get(0)[4];
 			
+			ps.setString(1, companyName);
+			ps.setString(2, deliveryAddress);
+			ps.setString(3, deliveryDate);
 			ps.executeUpdate();
+			
+			ResultSet rs = ps.getGeneratedKeys();
+			
+			while (rs.next()) {
+				orderNbr = rs.getLong(1);
+				System.out.println("ORDERNBR = " + orderNbr);
+			}
+
+			
+			for (int i = 0; i < fullOrder.size(); i++) {
+				cookieName = fullOrder.get(i)[0];
+				amountOfPallets = Integer.parseInt(fullOrder.get(i)[1]);
+
+
+
+				PreparedStatement ps2 = conn.prepareStatement("INSERT INTO pallets VALUES (?, ?, default, default, ?);");
+				PreparedStatement ps3 = conn.prepareStatement("UPDATE ingredients natural join recipes " +
+						"set IngQuantity = ingQuantity - quantity " + 
+						"where CookieName = ?;"
+					  );
+
+
+				for (int j = 0; j < amountOfPallets; j++) {
+					ps2.setLong(1, orderNbr);
+					ps2.setString(2, cookieName);
+					ps3.setString(1, cookieName);
+					ps2.setString(3, "DEFAULT LOCATION");
+					ps2.executeUpdate();
+					ps3.executeUpdate();
+				}
+			}
 
 		} catch(SQLException e) {
-			
+
 			e.printStackTrace();
 			System.out.println("Something wrong went wrong Database/orderPallet");
 		}
+
 	}
 
-	public Pallet getPallet(String palletID) {
+	public Pallet getPallet(String barCode) {
+		Pallet pallet = null;
 		try {
-			PreparedStatement ps = conn.prepareStatement("hitta pallet i databasen och returnera en pallet(objekt) med värden");
+			PreparedStatement ps = conn.prepareStatement("SELECT * FROM pallets WHERE BarCode=?");
+			ps.setString(1, barCode);
+			ResultSet rs = ps.executeQuery();
+
 			
-			ps.executeUpdate();
+			while (rs.next()){
+				pallet = new Pallet(rs.getString("OrderNbr"), rs.getString("CookieName"), rs.getString("BarCode"), rs.getBoolean("BlockStatus"), rs.getString("Location"));
+			}
 
 		} catch(SQLException e) {
-			
+
 			e.printStackTrace();
 			System.out.println("Something wrong went wrong Database/getPallet");
 		}
-		return null;
+		return pallet;
 	}
-	
-	public Pallet blockPallet(String palletID) {
+
+	public void blockPallet(String barCode) {
+		String cookieName = "def";
+		Date orderDate = null;
+		
 		try {
-			PreparedStatement ps = conn.prepareStatement("hitta palleten i databasen och blockera den(Skulle inte flera pallets blockeras?)");
-			
+			/*
+			PreparedStatement ps = conn.prepareStatement("UPDATE pallets SET BlockStatus = true WHERE barCode=?", Statement.RETURN_GENERATED_KEYS);
+			ps.setString(1, barCode);
 			ps.executeUpdate();
+			*/
+			PreparedStatement ps2 = conn.prepareStatement("SELECT CookieName, OrderDate FROM pallets NATURAL JOIN orders WHERE BarCode = ?;");
+			ps2.setLong(1, Long.parseLong(barCode));
+			
+			ps2.executeQuery();
+			
+			ResultSet rs2 = ps2.getResultSet();
+			
+			while (rs2.next()) {
+				System.out.println("rs2.next");
+				cookieName = rs2.getString(1);
+				orderDate = rs2.getDate(2);
+			}
+			
+			PreparedStatement ps4 = conn.prepareStatement("SET SQL_SAFE_UPDATES = 0;");
+			ps4.executeUpdate();
+		
+			System.out.println("KAKNAMN: " + cookieName + "   orderDateS: " + new Date(orderDate.getTime() - 7l*24l*60l*60l*1000l) + "   orderDateF: " + new Date(orderDate.getTime() + 1l*24l*60l*60l*1000l));
+			
+			PreparedStatement ps3 = conn.prepareStatement(
+															"UPDATE pallets SET BlockStatus = TRUE " + 
+															"WHERE OrderNbr IN (" + 
+															"SELECT OrderNbr FROM (SELECT * FROM orders NATURAL JOIN pallets) " +  
+															"AS testTable WHERE date(OrderDate) = ? " +  
+															"AND CookieName = ?" + 
+															"); ");
+			
+			ps3.setDate(1, new Date(orderDate.getTime()));
+		//	ps3.setDate(2, new Date(orderDate.getTime() + 1l*24l*60l*60l*1000l));
+			ps3.setString(2, cookieName);
+
+			ps3.executeUpdate();
+			
+			PreparedStatement ps5 = conn.prepareStatement("SET SQL_SAFE_UPDATES = 1;");
+			ps5.executeUpdate();
+			
 
 		} catch(SQLException e) {
-			
+
 			e.printStackTrace();
 			System.out.println("Something wrong went wrong Database/blockPallet");
 		}
-		return null;
 	}
 }

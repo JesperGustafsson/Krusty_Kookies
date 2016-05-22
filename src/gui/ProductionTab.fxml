@@ -7,7 +7,7 @@
 <?import javafx.scene.text.*?>
 
 
-<GridPane fx:controller="gui.LoginTab" 
+<GridPane fx:controller="gui.ProductionTab" 
     xmlns:fx="http://javafx.com/fxml" alignment="center" hgap="10" vgap="10"
     styleClass="root">
     <padding><Insets top="25" right="25" bottom="25" left="25"/></padding>
@@ -33,19 +33,33 @@
  
     <TextField fx:id="deliveryAddress"
         GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+        
+    <Label text="Company Name:"
+        GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+ 
+    <TextField fx:id="companyName"
+        GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+        
+    <Label text="Delivery Date:"
+        GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+ 
+    <TextField fx:id="deliveryDate"
+        GridPane.columnIndex="1" GridPane.rowIndex="5"/>
     
          
     <HBox spacing="10" alignment="bottom_right" 
-        GridPane.columnIndex="2" GridPane.rowIndex="3">
+        GridPane.columnIndex="2" GridPane.rowIndex="5">
+        <Button text="Add to Order"     
+        onAction="#addToCartAction"/>
+    </HBox>
+    
+    <HBox spacing="10" alignment="bottom_right" 
+        GridPane.columnIndex="2" GridPane.rowIndex="6">
         <Button text="Order Pallet(s)"     
         onAction="#orderButtonAction"/>
     </HBox>
-
-    <Text fx:id="actiontarget"
-        GridPane.columnIndex="1" GridPane.rowIndex="6"/>
-        
-    <stylesheets>
-      <URL value="@login.css" />
-    </stylesheets>
+    
+    <Text fx:id="status"
+        GridPane.columnIndex="0" GridPane.rowIndex="7"/>
 
 </GridPane>

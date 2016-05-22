@@ -5,22 +5,22 @@ import datamodel.Database;
 import javafx.fxml.FXML;
 
 public class TopTabView {
-	@FXML private Parent aLoginTab;
-	@FXML private LoginTab aLoginTabController;
+	@FXML private Parent aProductionTab;
+	@FXML private ProductionTab aProductionTabController;
 
-	@FXML private Parent aBookingTab;
-	@FXML private BookingTab aBookingTabController;
+	@FXML private Parent aSearchTab;
+	@FXML private SearchTab aSearchTabController;
 	
 	public void initialize() {
 		System.out.println("Initializing TopTabView");
 		
 		// send the booking controller reference to the login controller
 		// in order to pass data between the two
-		aLoginTabController.setBookingTab(aBookingTabController);
+		aProductionTabController.setSearchTab(aSearchTabController);
 	}
 	
 	public void setDatabase(Database db) {
-		aLoginTabController.setDatabase(db);
-		aBookingTabController.setDatabase(db);
+		aProductionTabController.setDatabase(db);
+		aSearchTabController.setDatabase(db);
 	}
 }

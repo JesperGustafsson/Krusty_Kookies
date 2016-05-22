@@ -18,7 +18,6 @@ public class Main extends Application {
 	public void start(Stage primaryStage) {
 		try {
 			
-			// BorderPane root = new BorderPane();
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("TopTab.fxml"));
 			Parent root = loader.load();
 			
@@ -35,7 +34,6 @@ public class Main extends Application {
 			primaryStage.show();
 			
 			// opening database connection
-	        /* --- TODO: change xxx to your user name, yyy to your passowrd --- */	        
 	        if(!db.openConnection("hbg59", "vfv371in")) {
 	            Alert alert = new Alert(AlertType.ERROR);
 	            alert.setTitle("Database error");
