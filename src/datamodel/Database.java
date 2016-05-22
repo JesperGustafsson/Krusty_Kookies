@@ -244,31 +244,40 @@ public class Database {
 		String currCookie = order.get(0)[0];
 		
 		try {
-			PreparedStatement psO = conn.prepareStatement("DROP table if exists tempT;");
-			PreparedStatement ps0 = conn.prepareStatement("CREATE table tempT as ( "
-														+ "select * from ingredients natural join recipes "
-														+ ");");
-			
-			psO.executeUpdate();
-			ps0.executeUpdate();
+			PreparedStatement ps01 = conn.prepareStatement("DROP table if exists tempIngr;");
+			PreparedStatement ps02 = conn.prepareStatement("DROP table if exists tempReci;");
+
+			PreparedStatement ps03 = conn.prepareStatement("CREATE table tempIngr as ( "+
+															"select * from ingredients "+
+															");");
+			PreparedStatement ps04 = conn.prepareStatement("CREATE table tempReci as ( "+
+															"select * from recipes "+
+															");");
+			ps01.executeUpdate();
+			ps02.executeUpdate();
+			ps03.executeUpdate();
+			ps04.executeUpdate();
 			
 			for (int i = 0; i < order.size(); i++) {
 				currCookie = order.get(i)[0];
-				PreparedStatement ps = conn.prepareStatement("select * from tempT where IngQuantity - Quantity*54*? < 0 and cookiename = ?;");
+				PreparedStatement ps = conn.prepareStatement("select * from tempIngr natural join tempReci where IngQuantity - Quantity*54*? < 0 and cookiename = ?;");
 				ps.setInt(1, Integer.parseInt(order.get(i)[1]));
 				ps.setString(2, order.get(i)[0]);
 				ps.executeQuery();
-				PreparedStatement ps2 = conn.prepareStatement("UPDATE tempT " + 
-																"set IngQuantity = ingQuantity - quantity*54 " + 
-																"where CookieName = in ("
-																+ "select cookiename from ( select * from ingredients natural join recipes) as t where cookiename = ?);"
-															  );
-				ps2.setString(1, currCookie);
+				PreparedStatement ps2 = conn.prepareStatement("UPDATE tempIngr natural join tempReci " +
+														"set IngQuantity = ingQuantity - quantity*54*? " +
+														"where CookieName in ( " +
+														"select cookiename from (select * from ingredients natural join recipes) as testTable5 " +
+														"where cookiename = ?);");
+				ps2.setInt(1, Integer.parseInt(order.get(i)[1]));
+				ps2.setString(2, currCookie);
 				ps2.executeUpdate();
 				
 			}
 			
-			psO.executeUpdate();
+			ps01.executeUpdate();
+			ps02.executeUpdate();
+
 		} catch (Exception e) {
 			throw new SQLException("Not enough ingredients for cookie: " + currCookie);
 		}	
