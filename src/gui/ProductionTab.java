@@ -10,7 +10,7 @@ import javafx.scene.text.Text;
 import javafx.scene.control.TextField;
 
 
-// controller for both the top tabs and login tab!
+// controller for both the top tabs and production tab!
 
 public class ProductionTab {
 	@FXML private TextField cookieName;
@@ -24,11 +24,13 @@ public class ProductionTab {
 	private SearchTab searchTabCtrl;
 	private Database db;
 	private ArrayList<String[]> fullOrder = new ArrayList<String[]>();
+	private ArrayList<String[]> tempFullOrder = new ArrayList<String[]>();
 
-	@FXML protected void orderButtonAction(ActionEvent event) { // Orderknappen
+
+	@FXML protected void orderButtonAction(ActionEvent event) { // Order button
 		try {
 			db.orderPallets(fullOrder);
-			
+
 			fullOrder.clear();
 			status.setText("Order sent");
 
@@ -37,50 +39,41 @@ public class ProductionTab {
 			deliveryAddress.clear();
 			companyName.clear();
 			deliveryDate.clear();
-			
+
 		} catch (SQLException e) {
 			status.setText(e.getMessage());
-//			e.printStackTrace();
 		}		
 	}
-	
-	@FXML protected void addToCartAction(ActionEvent event) {
-	
-		ArrayList<String[]> tempFullOrder = new ArrayList<String[]>();
-		String[] tempOrder = new String[5];
-		
-		for (int i = 0; i < fullOrder.size(); i++) {
-			for (int j = 0; j < fullOrder.get(i).length; j++) {
-				tempOrder[j] = fullOrder.get(i)[j];				
-			}
-			tempFullOrder.add(tempOrder);
-			System.out.println("TEST: " + tempFullOrder.get(i)[0]);
-		}
-		
+
+	@FXML protected void addToCartAction(ActionEvent event) { // Add to cart button
+		tempFullOrder = new ArrayList<String[]>(fullOrder);
+
+
+
 		String[] order = new String[5];
 		order[0] = cookieName.getText();
 		order[1] = amountOfPallets.getText();
 		order[2] = deliveryAddress.getText();
 		order[3] = companyName.getText();
 		order[4] = deliveryDate.getText();
-		
+
 		try {
 			tempFullOrder.add(order);
-			System.out.println(tempFullOrder.get(tempFullOrder.size()-1)[0]);
 			db.checkInput(order[0], order[3]);
 			db.checkIngredients(tempFullOrder);	
-			fullOrder.add(order);
+
+
+			fullOrder.add(order);			
 			status.setText(status.getText() + "\n" + amountOfPallets.getText() + " pallet(s) of " + cookieName.getText() + " added to order.");
+
+
+			tempFullOrder.clear();			
 			cookieName.setText("");
 			amountOfPallets.clear();
 
 		} catch (SQLException e) {
 			status.setText(status.getText() + "\n" + e.getMessage());
 		}
-
-		
-		
-
 	}
 
 	public void initialize() {

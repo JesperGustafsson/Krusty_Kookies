@@ -3,10 +3,8 @@ package datamodel;
 import java.sql.*;
 import java.util.ArrayList;
 
-import javafx.scene.control.TextField;
-
 /**
- * Database is a class that specifies the interface to the movie database. Uses
+ * Database is a class that specifies the interface to the Krusty Kookies database. Uses
  * JDBC and the MySQL Connector/J driver.
  */
 public class Database {
@@ -91,7 +89,6 @@ public class Database {
 		
 		ResultSet rs = null;
 		if (fullOrder.isEmpty()) {
-			System.out.println("EMPTY LOL");
 			throw new SQLException("Your order was empty.");
 		}
 		
@@ -102,7 +99,6 @@ public class Database {
 			deliveryAddress = fullOrder.get(0)[2];
 			companyName = fullOrder.get(0)[3];
 			deliveryDate = fullOrder.get(0)[4];
-			System.out.println(cookieName);
 			
 			ps.setString(1, companyName);
 			ps.setString(2, deliveryAddress);
@@ -125,7 +121,8 @@ public class Database {
 
 				PreparedStatement ps2 = conn.prepareStatement("UPDATE ingredients natural join recipes " +
 						"set IngQuantity = ingQuantity - quantity*54*? " + 
-						"where CookieName = ?;"
+						"where CookieName = in ("
+						+ "select cookiename from ( select * from ingredients natural join recipes) as t where cookiename = ?);"
 					  );
 				PreparedStatement ps3 = conn.prepareStatement("INSERT INTO pallets VALUES (?, ?, default, default, ?);");
 
@@ -173,11 +170,7 @@ public class Database {
 		Date orderDate = null;
 		
 		try {
-			/*
-			PreparedStatement ps = conn.prepareStatement("UPDATE pallets SET BlockStatus = true WHERE barCode=?", Statement.RETURN_GENERATED_KEYS);
-			ps.setString(1, barCode);
-			ps.executeUpdate();
-			*/
+
 			PreparedStatement ps2 = conn.prepareStatement("SELECT CookieName, OrderDate FROM pallets NATURAL JOIN orders WHERE BarCode = ?;");
 			ps2.setLong(1, Long.parseLong(barCode));
 			
@@ -186,7 +179,6 @@ public class Database {
 			ResultSet rs2 = ps2.getResultSet();
 			
 			while (rs2.next()) {
-				System.out.println("rs2.next");
 				cookieName = rs2.getString(1);
 				orderDate = rs2.getDate(2);
 			}
@@ -194,7 +186,6 @@ public class Database {
 			PreparedStatement ps4 = conn.prepareStatement("SET SQL_SAFE_UPDATES = 0;");
 			ps4.executeUpdate();
 		
-			System.out.println("KAKNAMN: " + cookieName + "   orderDateS: " + new Date(orderDate.getTime() - 7l*24l*60l*60l*1000l) + "   orderDateF: " + new Date(orderDate.getTime() + 1l*24l*60l*60l*1000l));
 			
 			PreparedStatement ps3 = conn.prepareStatement(
 															"UPDATE pallets SET BlockStatus = TRUE " + 
@@ -263,15 +254,15 @@ public class Database {
 			
 			for (int i = 0; i < order.size(); i++) {
 				currCookie = order.get(i)[0];
-
-				System.out.println("CHECKINGR: " + i + "   "  + currCookie);
 				PreparedStatement ps = conn.prepareStatement("select * from tempT where IngQuantity - Quantity*54*? < 0 and cookiename = ?;");
 				ps.setInt(1, Integer.parseInt(order.get(i)[1]));
 				ps.setString(2, order.get(i)[0]);
 				ps.executeQuery();
 				PreparedStatement ps2 = conn.prepareStatement("UPDATE tempT " + 
 																"set IngQuantity = ingQuantity - quantity*54 " + 
-																"where CookieName = ?;");
+																"where CookieName = in ("
+																+ "select cookiename from ( select * from ingredients natural join recipes) as t where cookiename = ?);"
+															  );
 				ps2.setString(1, currCookie);
 				ps2.executeUpdate();
 				

@@ -41,7 +41,7 @@ public class SearchTab {
 		System.out.println("Initializing BookingTab");
 	}
 
-	@FXML protected void searchButtonAction(ActionEvent event) throws SQLException { // Orderknappen
+	@FXML protected void searchButtonAction(ActionEvent event) throws SQLException { // Search button
 		String barCode = searchID.getText();
 		Pallet searchedPallet = db.getPallet(barCode);
 		if (searchedPallet == null) status.setText("A pallet with the barcode " + barCode + " does not exist.");
@@ -60,7 +60,7 @@ public class SearchTab {
 		currentLocation.setText(currentPallet.getLocation());
 	}
 	
-	@FXML protected void blockButtonAction(ActionEvent event) { // Orderknappen
+	@FXML protected void blockButtonAction(ActionEvent event) { // Block button
 
 		db.blockPallet(currentPallet.getBarCode());
 		currentPallet.setBlockStatus(true);
