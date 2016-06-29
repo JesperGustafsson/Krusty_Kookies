@@ -11,6 +11,10 @@ public class TopTabView {
 	@FXML private Parent aSearchTab;
 	@FXML private SearchTab aSearchTabController;
 	
+	@FXML private Parent aDateSearchTab;
+	@FXML private dateSearchTab aDateSearchTabController;
+	
+	
 	public void initialize() {
 		System.out.println("Initializing TopTabView");
 		
@@ -22,5 +26,7 @@ public class TopTabView {
 	public void setDatabase(Database db) {
 		aProductionTabController.setDatabase(db);
 		aSearchTabController.setDatabase(db);
+		aDateSearchTabController.setDatabase(db);
+		
 	}
 }

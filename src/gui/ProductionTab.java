@@ -56,7 +56,12 @@ public class ProductionTab {
 		order[2] = deliveryAddress.getText();
 		order[3] = companyName.getText();
 		order[4] = deliveryDate.getText();
-
+		try {
+			Integer.parseInt(order[1]);
+		} catch (Exception e) {
+			status.setText("Only numbers allowed in amount of pallets");
+		}
+		
 		try {
 			tempFullOrder.add(order);
 			db.checkInput(order[0], order[3]);

@@ -47,11 +47,15 @@
     <Label fx:id="currentLocation"
         GridPane.columnIndex="1" GridPane.rowIndex="5"/>
     
+    <Label text="Barcode search:"
+        GridPane.columnIndex="0" GridPane.rowIndex="6"/>
+        
     <TextField fx:id="searchID"
-    	GridPane.columnIndex="0" GridPane.rowIndex="6"/>     
-         
+    	GridPane.columnIndex="1" GridPane.rowIndex="6"/>
+ 
+ 
     <HBox spacing="10" alignment="bottom_right" 
-        GridPane.columnIndex="1" GridPane.rowIndex="6">
+        GridPane.columnIndex="1" GridPane.rowIndex="7">
         <Button text="Search Pallet"     
         onAction="#searchButtonAction"/>
         <Button text="Block Pallet"     

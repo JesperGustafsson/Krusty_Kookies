@@ -40,7 +40,7 @@
     <TextField fx:id="companyName"
         GridPane.columnIndex="1" GridPane.rowIndex="4"/>
         
-    <Label text="Delivery Date:"
+    <Label text="Delivery Date(YYYY-MM-DD):"
         GridPane.columnIndex="0" GridPane.rowIndex="5"/>
  
     <TextField fx:id="deliveryDate"

@@ -2,6 +2,7 @@ package datamodel;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Database is a class that specifies the interface to the Krusty Kookies database. Uses
@@ -106,7 +107,7 @@ public class Database {
 			ps.executeUpdate();
 			rs = ps.getGeneratedKeys();
 		} catch (SQLException e) {
-			throw new SQLException("Order was not placed due to ERROR: 1");
+			throw new SQLException("Order was not placed, most likely due to date not entered correctly.");
 		}
 		
 		try {
@@ -115,15 +116,15 @@ public class Database {
 				orderNbr = rs.getLong(1);
 			}
 			
-			for (int i = 0; i < fullOrder.size()-1; i++) {
+			for (int i = 0; i < fullOrder.size(); i++) {
 				cookieName = fullOrder.get(i)[0];
 				amountOfPallets = Integer.parseInt(fullOrder.get(i)[1]);
 
 				PreparedStatement ps2 = conn.prepareStatement("UPDATE ingredients natural join recipes " +
-						"set IngQuantity = ingQuantity - quantity*54*? " + 
-						"where CookieName = in ("
-						+ "select cookiename from ( select * from ingredients natural join recipes) as t where cookiename = ?);"
-					  );
+						"set IngQuantity = ingQuantity - quantity*54*? " +
+						"where CookieName in ( " +
+						"select cookiename from (select * from ingredients natural join recipes) as testTable5 " +
+						"where cookiename = ?);");
 				PreparedStatement ps3 = conn.prepareStatement("INSERT INTO pallets VALUES (?, ?, default, default, ?);");
 
 
@@ -140,6 +141,7 @@ public class Database {
 			}
 
 		} catch(SQLException e) {
+			e.printStackTrace();
 			throw new SQLException("Order failed due to unknown error");
 		}
 
@@ -193,11 +195,13 @@ public class Database {
 															"SELECT OrderNbr FROM (SELECT * FROM orders NATURAL JOIN pallets) " +  
 															"AS testTable WHERE date(OrderDate) = ? " +  
 															"AND CookieName = ?" + 
-															"); ");
+															")"
+															+ " AND CookieName = ?; ");
 			
 			ps3.setDate(1, new Date(orderDate.getTime()));
 		//	ps3.setDate(2, new Date(orderDate.getTime() + 1l*24l*60l*60l*1000l));
 			ps3.setString(2, cookieName);
+			ps3.setString(3, cookieName);
 
 			ps3.executeUpdate();
 			
@@ -281,5 +285,39 @@ public class Database {
 		} catch (Exception e) {
 			throw new SQLException("Not enough ingredients for cookie: " + currCookie);
 		}	
+	}
+
+	public ArrayList getNbrOfPallets(String dateStart, String dateEnd) {
+		System.out.println("database/getnbrofpalets");
+		ArrayList<String> cookieList = new ArrayList<String>();
+		String currCookie;
+		String currNbrOfP;
+		
+		try {
+			PreparedStatement ps = conn.prepareStatement("select CookieName, count(CookieName) as nbr from orders natural join pallets "
+					+ "where OrderDate between ? and ? group by cookieName;");
+			
+			ps.setString(1, dateStart);
+			ps.setString(2, dateEnd);
+			
+			ps.executeQuery();
+			
+			ResultSet rs = ps.getResultSet();
+			
+			while (rs.next()) {
+				currCookie = rs.getString("cookieName");
+				currNbrOfP = rs.getString("nbr");
+				cookieList.add(currCookie);
+				cookieList.add(currNbrOfP);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("LMAO DU SUGER");
+		}
+		
+		System.out.println("haha dude");
+		return cookieList;
+		
 	}
 }

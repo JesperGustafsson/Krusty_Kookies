@@ -29,7 +29,7 @@ public class Main extends Application {
 	        // make the database object visible to the controller
 	        wc.setDatabase(db);
 
-			primaryStage.setTitle("Movie Booking System");
+			primaryStage.setTitle("Krusty Kookies");
 			primaryStage.setScene(scene);
 			primaryStage.show();
 			

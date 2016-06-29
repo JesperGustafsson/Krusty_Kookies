@@ -62,10 +62,14 @@ public class SearchTab {
 	
 	@FXML protected void blockButtonAction(ActionEvent event) { // Block button
 
+		if (currentPallet == null) {
+			status.setText("Search for a pallet before trying to block");
+		} else {
 		db.blockPallet(currentPallet.getBarCode());
 		currentPallet.setBlockStatus(true);
 		status.setText("Pallet " + currentPallet.getBarCode() + " has been blocked.");
 		updateView();	
+		}
 	}
 	
 	public void setDatabase(Database db) {

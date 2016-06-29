@@ -13,6 +13,10 @@
         <Tab text="Pallet Search and Block">
                 <fx:include fx:id="aSearchTab" source="SearchTab.fxml"/>
         </Tab>
+        
+        <Tab text="Pallet Search By Date">
+                <fx:include fx:id="aDateSearchTab" source="dateSearchTab.fxml"/>
+        </Tab>
     </tabs>
     </TabPane>
 </top>
